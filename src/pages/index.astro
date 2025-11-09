@@ -1,19 +1,167 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Markdown from '../components/Markdown.astro';
-
-const explainer = `
-An Astro website can go way beyond static pages - on the right platform.
-
-Netlify supports not only [Streaming SSR](https://docs.astro.build/en/guides/server-side-rendering/#html-streaming) and fast [Edge Middleware](https://docs.astro.build/en/guides/middleware/), but also [on-demand revalidation](https://www.netlify.com/blog/cache-tags-and-purge-api-on-netlify/) and [stale-while-revalidate](https://www.netlify.com/blog/swr-and-fine-grained-cache-control/). 
-Any page or data can be rebuilt only when needed, without site visitors ever getting a performance hit.
-`;
+// src/pages/index.astro// Este é o ficheiro da sua nova página inicial.
+// A sintaxe --- é onde o JavaScript/TypeScript vive.
+const pageTitle = "CrédiCom Pro | O Seu Especialista em Crédito Pessoal";
+const plans = [
+    {
+        name: "Standard",
+        price: "7,99€",
+        features: ["Simulações Ilimitadas", "Histórico Completo", "Dashboard Pessoal", "Alertas de Mercado"]
+    },
+    {
+        name: "Pro",
+        price: "14,99€",
+        features: ["Tudo do Standard", "Exportar Relatórios PDF/CSV", "Análise de Cenários", "Suporte Prioritário"]
+    },
+    {
+        name: "Equipa",
+        price: "29,99€+",
+        features: ["Tudo do Pro", "Gestão Multi-utilizador", "Dashboard de Administrador", "Relatórios Consolidados"]
+    }
+];
 ---
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{pageTitle}</title>
+    <style>
+        :root {
+            --primary-color: #013f36;
+            --secondary-color: #2dd4bf;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f0fdfa;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        header {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .cta-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+        .section {
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+        }
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .plan-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: left;
+            border: 2px solid transparent;
+        }
+        .plan-card.pro {
+            border-color: var(--secondary-color);
+        }
+        .plan-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .plan-card .price {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        .plan-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+        .plan-card li {
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #e6f7f2;
+            margin-top: 4rem;
+        }
+        footer p, footer a {
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Controle o seu futuro financeiro.</h1>
+            <p>A CrédiCom Pro é a ferramenta mais poderosa para simular, analisar e gerir os seus créditos, tudo na palma da sua mão.</p>
+            <a href="#plans" class="cta-button">Ver Planos</a>
+        </div>
+    </header>
 
-<Layout title="Welcome to Astro.">
-    <h1 class="mb-10">Netlify Platform Starter for Astro</h1>
-    <Markdown content={explainer} class="mb-10 text-lg" />
-    <p>
-        <a href="https://docs.netlify.com/frameworks/astro/" class="btn btn-lg sm:min-w-64">Read the Docs</a>
-    </p>
-</Layout>
+    <main id="plans" class="container">
+        <section class="section">
+            <h2 class="section-title">Um Plano para Cada Necessidade</h2>
+            <div class="plans-grid">
+                {plans.map(plan => (
+                    <div class={`plan-card ${plan.name.toLowerCase()}`}>
+                        <h3>CrédiCom {plan.name}</h3>
+                        <p class="price">{plan.price}<small>/mês</small></p>
+                        <ul>
+                            {plan.features.map(feature => <li>✓ {feature}</li>)}
+                        </ul>
+                        <a href="#" class="cta-button">Disponível em Breve</a>
+                    </div>
+                ))}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 CrédiCom Pro. Todos os direitos reservados.</p>
+            <p>
+                <a href="#">Política de Privacidade</a> | <a href="#">Termos de Serviço</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
