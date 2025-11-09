@@ -1,36 +1,35 @@
 // src/pages/api/create-subscription.js
+import Stripe from 'stripe';
 
-// Este é o formato correto para um API endpoint no Astro
-export async function GET() {
-  // No Astro, as variáveis de ambiente são acedidas com `import.meta.env`
-  const key = import.meta.env.STRIPE_SECRET_KEY || 'Chave não encontrada!';
-  const keyPrefix = key.substring(0, 8); // Apenas para diagnóstico seguro
+const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY);
 
-  const htmlBody = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Diagnóstico de Chave</title>
-      <style>
-        body { font-family: sans-serif; display: grid; place-content: center; height: 100vh; margin: 0; }
-        div { padding: 2rem; border: 1px solid #ccc; border-radius: 8px; text-align: center; }
-        code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 4px; }
-      </style>
-    </head>
-    <body>
-      <div>
-        <p>O prefixo da chave Stripe que o servidor Astro está a usar é:</p>
-        <h1><code>${keyPrefix}</code></h1>
-      </div>
-    </body>
-    </html>
-  `;
+export async function POST({ request }) {
+  try {
+    const { priceId } = await request.json();
 
-  // O Astro usa o standard 'Response' para devolver dados
-  return new Response(htmlBody, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/html",
-    },
-  });
+    const customer = await stripe.customers.create();
+
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+    });
+
+    return new Response(JSON.stringify({
+      subscriptionId: subscription.id,
+      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('Stripe Error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
